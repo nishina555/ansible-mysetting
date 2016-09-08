@@ -1,60 +1,63 @@
 ## Overview
-This repository is for creating my setting on centOS container.
+This repository is for creating my setting on centOS in VM.
+After executing `vagrant up`, you can get centOS, which has `tmux + zsh + neovim`.
 
-## Preparation for creating docker OS
-If you haven't host machine for docker, please install by following the procedure
+## How to use
 ```
 # Create docker container on virtualbox
-docker-machine create --driver virtualbox test-docker
-
-# Get the environment commands for your new VM
-docker-machine env test-docker
-
-# Connect your shell to the new machine
-eval "$(docker-machine env test-docker)"
+cd /path/to/ansible-mysetting
+vagrant up
+vagrant provision
 ```
 
-## Preparation in docker OS
+## Attention!!!!
+vagrant1.8 ver has a bug regarding ssh key so you may encounter the situation where `default: Warning: Authentication failure. Retrying...` occurs periodically during `vagrant up`.
+In this case, please login centOS then modify the permission.
+login password and username are vagrant.
+
+vagrant1.8系にはssh鍵認証系のバグがあると報告されています。`default: Warning: Authentication failure. Retrying...`のエラーが`vagrant up`中にずっとおこっていた場合、centOS以下のディレクトリのパーミッションを変更してください
+````
+chmod 0600 .ssh/authorized_keys
+````
+
+after that, try to reload vagrant
+パーミッション変更後、再度vagrantをreloadしてください。(そうしないと、このあとansibleを実行するときにssh接続がうまくいかない可能性があります。)
 ```
-# Login
-docker-machine ssh test-docker
-
-# Install python
-tce-load -wi python
-
-# Install pip
-curl https://bootstrap.pypa.io/get-pip.py | sudo python -
-
-# Install docker.py
-sudo pip install docker-py
-
-# Create symbolic link
-sudo ln -s /usr/local/bin/python /usr/bin/python
+vagrant reload
 ```
-
-## Execution
-```
-eval "$(docker-machine env test-docker)"
-ansible-playbook site.yml
-```
-
 ## Confirmation
 ```
-# Check the process
-docker ps
+# login
+vagrant ssh
 
-## Confirm in docker OS
-docker exec -it test-container /bin/sh
+## Confirm the command
+zsh
+tmux
+nvim
 ```
 
-## Rollback
-```
-# Remove docker container
-docker rm -f test-container
+## If ansible doesn't work
 
-# Remove docker host
-docker-machine rm test-docker
+```
+vagrant ssh
 ```
 
-## Memo
-* Make sure ip address described in ssh_config is correct or not. you can see the address by `docker-machine env test-docker`
+### Confirmation of ssh setting and hosts file
+if you haven't access to centOS, please check it.
+```
+# if the response fails, please make sure hosts file and ssh setting
+ansible -i hosts all -m ping -u vagrant --private-key=.vagrant/machines/default/virtualbox/private_key
+
+# if you want to get more detailed information,
+ansible -vvvv -i hosts all -m ping -u vagrant --private-key=.vagrant/machines/default/virtualbox/private_key
+
+```
+### Confirmation of ssh.config file
+if you haven't access to centOS, please check it.
+```
+# if the response fails even if above response succeed, please make sure ssh.config and ansible.cfg setting
+ansible all -m ping
+
+# if you want to get more detailed information,
+ansible -vvvv all -m ping
+```
