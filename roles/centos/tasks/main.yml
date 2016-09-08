@@ -1,0 +1,3 @@
+---
+- name: deploy centos container
+  docker: image=centos:latest name=test-container ports=80:80 expose=80 tty=yes

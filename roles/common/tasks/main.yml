@@ -1,0 +1,55 @@
+---
+    - name: install packages
+      yum: name={{item}} state=installed
+      with_items:
+      - vim
+      - zsh
+      - git
+      - tmux
+      - libtool
+      - autoconf
+      - automake
+      - cmake
+      - gcc
+      - gcc-c++
+      - make
+      - pkgconfig
+      - unzip
+      sudo: yes
+    - name: clone dotfiles
+      git: repo=https://github.com/toshi247/dotfile.git dest=~/dotfile accept_hostkey=yes
+      sudo: no
+    - name: clone neovim
+      git: repo=https://github.com/neovim/neovim.git dest=~/neovim
+      sudo: no
+    - name: change directory to neovim
+      shell: cd ~/neovim
+    - name: make neovim
+      command: make chdir=~/neovim
+    - name: install neovim
+      command: make install chdir=/home/vagrant/neovim
+      sudo: yes
+    - name: create dir for neovim
+      shell: mkdir -pv ~/.config/nvim
+    - name: create symbolic link for neovim
+      file:
+        src: ~/dotfile/{{item}}
+        dest: ~/.config/nvim/{{item}}
+        state: link
+        force: yes
+      with_items:
+        - init.vim
+    - name: create symbolic link
+      file:
+        src: ~/dotfile/{{item}}
+        dest: ~/{{item}}
+        state: link
+        force: yes
+      with_items:
+        - .zshrc
+        - .vimrc
+        - .tmux.conf
+        - .dein.toml
+        - .dein_lazy.toml
+    - name: create path
+      shell: touch ~/dotfile/.path

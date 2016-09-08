@@ -1,0 +1,4 @@
+---
+- hosts: vagrants
+  roles:
+    - common

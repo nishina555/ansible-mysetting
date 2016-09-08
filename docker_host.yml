@@ -1,0 +1,6 @@
+---
+- hosts: docker_host
+  become: yes
+  remote_user: docker
+  roles:
+    - centos
