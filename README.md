@@ -15,21 +15,6 @@ vagrant up
 vagrant provision
 ```
 
-## Attention!!!!
-vagrant1.8 ver has a bug regarding ssh key so you may encounter the situation where `default: Warning: Authentication failure. Retrying...` occurs periodically during `vagrant up`.
-In this case, please login centOS then modify the permission.
-login password and username are vagrant.
-
-vagrant1.8系にはssh鍵認証系のバグがあると報告されています。`default: Warning: Authentication failure. Retrying...`のエラーが`vagrant up`中にずっとおこっていた場合、centOS以下のディレクトリのパーミッションを変更してください
-````
-chmod 0600 .ssh/authorized_keys
-````
-
-after that, try to reload vagrant
-パーミッション変更後、再度vagrantをreloadしてください。(そうしないと、このあとansibleを実行するときにssh接続がうまくいかない可能性があります。)
-```
-vagrant reload
-```
 ## Confirmation
 ```
 # login
