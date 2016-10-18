@@ -32,6 +32,7 @@ nvim
 vagrant ssh
 ```
 
+
 ### Confirmation of ssh setting and hosts file
 if you haven't access to centOS, please check it.
 ```
